@@ -16,7 +16,7 @@ public class VehicleMove : MonoBehaviour
     void Update()
     {
         // verticalInput = Input.GetAxis("Vertical");
-        float vQueueSpeed = 0.1F;
+        float vQueueSpeed = 0.07F;
 
         transform.Translate(Vector3.forward * vQueueSpeed);
     }

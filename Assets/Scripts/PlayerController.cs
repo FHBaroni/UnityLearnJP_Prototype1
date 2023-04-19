@@ -6,11 +6,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed;
+    [SerializeField] private float speed2;
     [SerializeField] private float rpm;
+    [SerializeField] private float rpm2;
     [SerializeField] private float horsePower;
     [SerializeField] GameObject centerOfMass;
     [SerializeField] TextMeshProUGUI speedometerText;
     [SerializeField] TextMeshProUGUI rpmText;
+    [SerializeField] TextMeshProUGUI speedometerText2;
+    [SerializeField] TextMeshProUGUI rpmText2;
     [SerializeField] List<WheelCollider> allWheels;
     [SerializeField] int wheelsOnGround;
 
@@ -18,6 +22,8 @@ public class PlayerController : MonoBehaviour
     private float horizontaInput;
     private float forwardInput;
 
+    public AudioSource sfx;
+    public AudioSource music;
     public Camera mainCamera;
     public Camera hoodCamera;
     public KeyCode switchKey;
@@ -26,13 +32,12 @@ public class PlayerController : MonoBehaviour
 
     public string inputID;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
         hoodCamera.enabled = false;
         playerRb.centerOfMass = centerOfMass.transform.localPosition;
+        music.Play();
     }
 
     // Update is called once per frame
@@ -48,15 +53,27 @@ public class PlayerController : MonoBehaviour
             //transform.Translate(Vector3.forward * Time.deltaTime * forwardInput * speed);
             transform.Rotate(Vector3.up, turnSpeed * horizontaInput * Time.deltaTime);
             //transform.Translate(Vector3.right* Time.deltaTime * turnSpeed);
-            speed = Mathf.RoundToInt(playerRb.velocity.magnitude * 3.6f);
-            speedometerText.SetText("Speed:" + speed + "Km/h");
 
-            rpm = (speed % 30) * 35;
-            rpmText.SetText("RPM: " + rpm);
+            if (inputID == "1")
+            {
+                speed = Mathf.RoundToInt(playerRb.velocity.magnitude * 3.6f);
+                speedometerText.SetText("Speed:" + speed + "Km/h");
+
+                rpm = (speed % 30) * 35;
+                rpmText.SetText("RPM: " + rpm);
+            }
+            else if (inputID == "2")
+            {
+                speed2 = Mathf.RoundToInt(playerRb.velocity.magnitude * 3.6f);
+                speedometerText2.SetText("Speed:" + speed2 + "Km/h");
+
+                rpm2 = (speed2 % 30) * 35;
+                rpmText2.SetText("RPM: " + rpm2);
+            }
         }
 
         if (Input.GetKeyDown(switchKey))
-        {        
+        {
             mainCamera.enabled = !mainCamera.enabled;
             hoodCamera.enabled = !hoodCamera.enabled;
         }
@@ -78,6 +95,13 @@ public class PlayerController : MonoBehaviour
         else
         {
             return false;
+        }
+    }
+    private void OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.tag == "car")
+        {
+            sfx.Play();
         }
     }
 }
